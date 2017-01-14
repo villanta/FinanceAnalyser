@@ -1,0 +1,13 @@
+
+.root {
+	-fx-background-color: #9fff82;
+}
+
+.titleLabel{
+	-fx-font-size: 30.0;
+	fx-text-fill: black;
+}
+
+.bigButton {
+	-fx-font-size: 20.0;
+}
