@@ -1,5 +1,8 @@
-/.gradle/
-/bin/
-.classpath
-.project
-/build
+/*
+!/src/
+!/gradle.build
+!/settings.gradle
+!/gradlew
+!/gradlew.bat
+!/FinanceAnalyserApplication.launch
+!/.gitignore
