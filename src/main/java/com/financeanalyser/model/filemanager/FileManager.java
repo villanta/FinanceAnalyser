@@ -1,15 +1,23 @@
 package com.financeanalyser.model.filemanager;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class FileManager {
+import com.financeanalyser.model.data.Record;
+import com.financeanalyser.model.data.Transaction;
 
+public class FileManager {	
 	private static final Logger LOG = LogManager.getLogger(FileManager.class);
 
 	private static final String DEFAULT_WINDOWS_LOCATION_ENV = "APPDATA";
@@ -17,16 +25,16 @@ public class FileManager {
 	private static final String APPLICATION_CONFIG_FILE = "/config.props";
 
 	private FinanceConfig financeConfig;
-	private boolean isValid;
 
 	/**
 	 * Creates directory if it doesn't exist and initialises filestructure.
 	 */
-	public void initialise() {
+	public boolean initialise() {
 		if (isApplicationDirectoryCreated()) {
-			isValid = parseOrInitialiseConfig();
+			return parseOrInitialiseConfig();
 		} else {
 			LOG.error("Failed to initialise root directory structure");
+			return false;
 		}
 	}
 
@@ -69,6 +77,50 @@ public class FileManager {
 			return financeAnalyserData.mkdirs();
 		} else {
 			return false;
+		}
+	}
+	
+	public boolean saveRecord(Record record, File file) {
+		try (FileWriter fw = new FileWriter(file)) {
+			BufferedWriter bw = new BufferedWriter(fw);
+			
+			for (Transaction t : record.getRecord()) {
+				bw.write(t.toFileString());
+				bw.newLine();
+			}
+			bw.flush();
+		} catch (FileNotFoundException e) {
+			LOG.error("File not found...", e);
+			return false;
+		} catch (IOException e) {
+			LOG.error("Failed to write to file...", e);
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public Optional<Record> openRecord(File file) {
+		try (FileReader fr = new FileReader(file)) {
+			BufferedReader br = new BufferedReader(fr);
+			
+			Record record = new Record();
+			
+			String line;
+			while ((line = br.readLine()) != null) {
+				Optional<Transaction> ot = Transaction.fromFileString(line);
+				if (ot.isPresent()) {
+					record.addTransaction(ot.get());
+				}
+			}
+			
+			return Optional.of(record);
+		} catch (FileNotFoundException e) {
+			LOG.error("File not found...", e);
+			return Optional.empty();
+		} catch (IOException e) {
+			LOG.error("Failed to read file...", e);
+			return Optional.empty();
 		}
 	}
 }

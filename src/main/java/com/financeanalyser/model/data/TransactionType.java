@@ -2,10 +2,11 @@ package com.financeanalyser.model.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public enum TransactionType {
 	SALARY_BASIC("Basic salary"), SALARY_BONUS("Bonus salary"), RENT("Rent"), BILLS("Bills"), GROCERIES(
-			"Groceries"), TAKEAWAY("Takeaway"), ENTERTAINMENT("Entertainment"), CASH("Cash");
+			"Groceries"), TAKEAWAY("Takeaway"), ENTERTAINMENT("Entertainment"), CASH("Cash"), UNKNOWN("Unknown");
 
 	private String label;
 
@@ -26,6 +27,16 @@ public enum TransactionType {
 		types.add(CASH);
 
 		return types;
+	}
+
+	public static TransactionType typeOf(String s) {
+		Optional<TransactionType> opType = TransactionType.getAllTypes().stream()
+				.filter(type -> s.equals(type.toString())).findFirst();
+		if (opType.isPresent()) {
+			return opType.get();
+		} else {
+			return UNKNOWN;
+		}
 	}
 
 	@Override

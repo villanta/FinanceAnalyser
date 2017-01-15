@@ -1,6 +1,9 @@
 package com.financeanalyser.model.data;
 
 import java.time.LocalDate;
+import java.util.Optional;
+
+import com.financeanalyser.components.SerializableStringProperty;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -26,9 +29,9 @@ public class Transaction {
 	/*
 	 * Extra properties needed for table.
 	 */
-	private StringProperty transactionType = new SimpleStringProperty("");
+	private SerializableStringProperty transactionType = new SerializableStringProperty("");
 
-	private StringProperty amountString = new SimpleStringProperty("");
+	private SerializableStringProperty amountString = new SerializableStringProperty("");
 
 	/**
 	 * Constructor method, requires core information regarding the transaction.
@@ -36,11 +39,15 @@ public class Transaction {
 	 * @param date
 	 * @param amount
 	 * @param type
+	 * @param name
+	 * @param note
 	 */
-	public Transaction(LocalDate date, int amount, TransactionType type) {
+	public Transaction(LocalDate date, int amount, TransactionType type, String name, String note) {
 		setDate(date);
 		setCentAmount(amount);
 		setType(type);
+		setName(name);
+		setNote(note);
 	}
 
 	public IntegerProperty centAmountProperty() {
@@ -95,26 +102,73 @@ public class Transaction {
 	}
 
 	public void setDate(LocalDate date) {
-		this.date = date;		
+		this.date = date;
 	}
-	
+
 	public String getTransactionType() {
 		return transactionType.get();
 	}
-	
+
 	public String getAmount() {
 		return amountString.get();
 	}
-	
+
 	public String getDateString() {
 		return date.toString();
 	}
-	
+
 	public StringProperty transactionTypeProperty() {
 		return transactionType;
 	}
-	
+
 	public StringProperty amountProperty() {
 		return amountString;
+	}
+
+	public String toFileString() {
+		StringBuilder sb = new StringBuilder();
+
+		// <type>,<amount>,<date>,<name>,<note>
+		sb.append(type.toString());
+		sb.append(",");
+
+		sb.append(Integer.toString(getCentAmount()));
+		sb.append(",");
+
+		sb.append(date.toString());
+		sb.append(",");
+
+		sb.append(getName());
+		sb.append(",");
+
+		sb.append(getNote());
+		sb.append("\n");
+
+		return sb.toString();
+	}
+
+	public static Optional<Transaction> fromFileString(String line) {
+		String[] parts = line.split(",");
+
+		TransactionType type;
+		int amount;
+		LocalDate date;
+		String name;
+		String note;
+		if (parts.length != 5) {
+			return Optional.empty();
+		} else {
+			type = TransactionType.typeOf(parts[0]);
+			amount = Integer.parseInt(parts[1]);
+
+			String dateString = parts[2];
+			String[] dateStringParts = dateString.split("-");
+			date = LocalDate.of(Integer.parseInt(dateStringParts[0]), Integer.parseInt(dateStringParts[1]), Integer.parseInt(dateStringParts[2]));
+			name = parts[3];
+			note = parts[4];
+
+			Transaction t = new Transaction(date, amount, type, name, note);
+			return Optional.of(t);
+		}
 	}
 }

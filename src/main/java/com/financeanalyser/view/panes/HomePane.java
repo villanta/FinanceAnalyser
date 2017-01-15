@@ -1,16 +1,20 @@
 package com.financeanalyser.view.panes;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.financeanalyser.model.data.Record;
 import com.financeanalyser.view.viewswitchcontroller.FAViewSwitchController;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 
 public class HomePane extends AnchorPane {
 	private static final Logger LOG = LogManager.getLogger(HomePane.class);
@@ -26,19 +30,33 @@ public class HomePane extends AnchorPane {
 		loadView();
 		initialiseFX();
 	}
-	
+
 	@FXML
 	public void createRecordAction(ActionEvent event) {
 		System.err.println("Create");
-		viewSwitchController.recordOverviewScreen();
+		viewSwitchController.recordOverviewScreen(new Record());
 		viewSwitchController.showCreateRecordDialog();
 		event.consume();
 	}
-	
+
 	@FXML
 	public void loadRecordAction(ActionEvent event) {
-		System.err.println("Load");
+		File file = showFilePicker();
+		if (file != null) {
+			Optional<Record> record = viewSwitchController.getFileManager().openRecord(file);
+			if (record.isPresent()) {
+				viewSwitchController.recordOverviewScreen(record.get());
+			} else {
+				// TODO
+			}
+		}
 		event.consume();
+	}
+
+	private File showFilePicker() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Open Record File");
+		return fileChooser.showOpenDialog(viewSwitchController.getApplicationStage());
 	}
 
 	private void initialiseFX() {

@@ -13,8 +13,8 @@ public class FinanceAnalyserScene extends Scene {
 
 	public FinanceAnalyserScene() {
 		super(new AnchorPane());
-		initialiseConfiguration();
 		initialiseViewSwitchController();
+		initialiseConfiguration();
 
 		initialiseScene();
 
@@ -24,6 +24,8 @@ public class FinanceAnalyserScene extends Scene {
 	private void initialiseConfiguration() {
 		FileManager manager = new FileManager();
 		manager.initialise();
+		
+		viewSwitchController.setFileManager(manager);
 	}
 
 	private void initialiseViewSwitchController() {

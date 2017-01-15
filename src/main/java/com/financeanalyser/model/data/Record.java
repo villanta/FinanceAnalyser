@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Record {
+
 	private List<Transaction> records;
 
 	public Record() {
@@ -13,12 +14,8 @@ public class Record {
 	public List<Transaction> getRecord() {
 		return records;
 	}
-	
+
 	public boolean addTransaction(Transaction t) {
 		return records.add(t);
-		
 	}
-	
-	
-	
 }
