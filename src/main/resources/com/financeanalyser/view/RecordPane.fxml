@@ -17,7 +17,7 @@
           <RowConstraints minHeight="100.0" vgrow="NEVER" />
         </rowConstraints>
          <children>
-            <AnchorPane fx:id="recordTablePane" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" />
+            <AnchorPane fx:id="recordTablePane" GridPane.columnIndex="1" />
             <AnchorPane fx:id="bottomPane" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <AnchorPane fx:id="sidePane" GridPane.rowSpan="2" />
          </children>
