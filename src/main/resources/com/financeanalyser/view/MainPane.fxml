@@ -24,8 +24,8 @@
           <RowConstraints vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button mnemonicParsing="false" styleClass="bigButton" text="Load existing record..." GridPane.columnIndex="2" GridPane.rowIndex="3" />
-            <Button mnemonicParsing="false" styleClass="bigButton" text="Create new record..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" onAction="#loadRecordAction" styleClass="bigButton" text="Load existing record..." GridPane.columnIndex="2" GridPane.rowIndex="3" />
+            <Button mnemonicParsing="false" onAction="#createRecordAction" styleClass="bigButton" text="Create new record..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <Label styleClass="titleLabel" text="Finance Analyser" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
          </children>
       </GridPane>
