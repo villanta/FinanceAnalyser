@@ -1,10 +1,13 @@
 package com.financeanalyser.view.panes;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.financeanalyser.model.data.Transaction;
+import com.financeanalyser.model.data.TransactionType;
 import com.financeanalyser.view.components.RecordsTable;
 import com.financeanalyser.view.viewswitchcontroller.FAViewSwitchController;
 
@@ -29,6 +32,7 @@ public class RecordPane extends AnchorPane {
 
 	public RecordPane(FAViewSwitchController faViewSwitchController) {
 		super();
+		setAnchorPaneZero(this);
 		this.viewSwitchController = faViewSwitchController;
 
 		loadView();
@@ -39,6 +43,12 @@ public class RecordPane extends AnchorPane {
 		recordsTable = new RecordsTable();
 		setAnchorPaneZero(recordsTable);
 		recordTablePane.getChildren().add(recordsTable);
+		
+		Transaction transaction = new Transaction(LocalDate.now(), 950, TransactionType.CASH);
+		transaction.setName("Withdrawal");
+		transaction.setNote("Used for lunch.");
+		
+		recordsTable.getItems().add(transaction);
 	}
 
 	private void loadView() {
@@ -46,7 +56,7 @@ public class RecordPane extends AnchorPane {
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(RECORD_PANE_FXML_LOCATION));
 		loader.setController(this);
-		try {
+		try {	
 			AnchorPane pane = loader.load();
 			setAnchorPaneZero(pane);
 			super.getChildren().add(pane);

@@ -11,3 +11,23 @@
 .bigButton {
 	-fx-font-size: 20.0;
 }
+
+.typeCol {
+	-fx-alignment: CENTER;
+}
+
+.amountCol {
+	-fx-alignment: CENTER-RIGHT;
+}
+
+.dateCol {
+	-fx-alignment: CENTER;
+}
+
+.nameCol {
+	-fx-alignment: CENTER-LEFT;
+}
+
+.noteCol {
+	-fx-alignment: CENTER-LEFT;
+}

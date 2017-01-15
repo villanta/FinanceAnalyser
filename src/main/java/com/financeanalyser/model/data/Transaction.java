@@ -19,7 +19,16 @@ public class Transaction {
 	// type groceries
 	private StringProperty name = new SimpleStringProperty("");
 
+	private StringProperty note = new SimpleStringProperty("");
+
 	private LocalDate date;
+
+	/*
+	 * Extra properties needed for table.
+	 */
+	private StringProperty transactionType = new SimpleStringProperty("");
+
+	private StringProperty amountString = new SimpleStringProperty("");
 
 	/**
 	 * Constructor method, requires core information regarding the transaction.
@@ -29,9 +38,9 @@ public class Transaction {
 	 * @param type
 	 */
 	public Transaction(LocalDate date, int amount, TransactionType type) {
-		this.date = date;
-		this.centAmount.set(amount);
-		this.type = type;
+		setDate(date);
+		setCentAmount(amount);
+		setType(type);
 	}
 
 	public IntegerProperty centAmountProperty() {
@@ -44,6 +53,8 @@ public class Transaction {
 
 	public void setCentAmount(final int centAmount) {
 		this.centAmountProperty().set(centAmount);
+		double price = centAmount / 100.0;
+		this.amountString.set(String.format("%.2f", price));
 	}
 
 	public StringProperty nameProperty() {
@@ -58,12 +69,25 @@ public class Transaction {
 		this.nameProperty().set(name);
 	}
 
+	public StringProperty noteProperty() {
+		return this.note;
+	}
+
+	public String getNote() {
+		return this.noteProperty().get();
+	}
+
+	public void setNote(final String note) {
+		this.noteProperty().set(note);
+	}
+
 	public TransactionType getType() {
 		return type;
 	}
 
 	public void setType(TransactionType type) {
 		this.type = type;
+		this.transactionType.set(type.toString());
 	}
 
 	public LocalDate getDate() {
@@ -71,6 +95,26 @@ public class Transaction {
 	}
 
 	public void setDate(LocalDate date) {
-		this.date = date;
+		this.date = date;		
+	}
+	
+	public String getTransactionType() {
+		return transactionType.get();
+	}
+	
+	public String getAmount() {
+		return amountString.get();
+	}
+	
+	public String getDateString() {
+		return date.toString();
+	}
+	
+	public StringProperty transactionTypeProperty() {
+		return transactionType;
+	}
+	
+	public StringProperty amountProperty() {
+		return amountString;
 	}
 }
