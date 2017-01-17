@@ -8,6 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -16,8 +18,13 @@ import org.apache.logging.log4j.Logger;
 
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
+import com.financeanalyser.view.viewswitchcontroller.FAViewSwitchController;
 
-public class FileManager {	
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Window;
+
+public class FileManager {
 	private static final Logger LOG = LogManager.getLogger(FileManager.class);
 
 	private static final String DEFAULT_WINDOWS_LOCATION_ENV = "APPDATA";
@@ -79,11 +86,12 @@ public class FileManager {
 			return false;
 		}
 	}
-	
-	public boolean saveRecord(Record record, File file) {
+
+	public boolean saveRecord(Record record, FAViewSwitchController viewSwitchController) {
+		File file = showFilePicker(true, viewSwitchController);
 		try (FileWriter fw = new FileWriter(file)) {
 			BufferedWriter bw = new BufferedWriter(fw);
-			
+
 			for (Transaction t : record.getRecord()) {
 				bw.write(t.toFileString());
 				bw.newLine();
@@ -96,16 +104,17 @@ public class FileManager {
 			LOG.error("Failed to write to file...", e);
 			return false;
 		}
-		
+
 		return true;
 	}
-	
-	public Optional<Record> openRecord(File file) {
+
+	public Optional<Record> openRecord(FAViewSwitchController viewSwitchController) {
+		File file = showFilePicker(false, viewSwitchController);
 		try (FileReader fr = new FileReader(file)) {
 			BufferedReader br = new BufferedReader(fr);
-			
+
 			Record record = new Record();
-			
+
 			String line;
 			while ((line = br.readLine()) != null) {
 				Optional<Transaction> ot = Transaction.fromFileString(line);
@@ -113,7 +122,7 @@ public class FileManager {
 					record.addTransaction(ot.get());
 				}
 			}
-			
+
 			return Optional.of(record);
 		} catch (FileNotFoundException e) {
 			LOG.error("File not found...", e);
@@ -121,6 +130,26 @@ public class FileManager {
 		} catch (IOException e) {
 			LOG.error("Failed to read file...", e);
 			return Optional.empty();
+		}
+	}
+
+	private File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File(System.getenv(DEFAULT_WINDOWS_LOCATION_ENV) + APPLICATION_FOLDER));
+		fileChooser.setTitle("Open Record File");
+
+		List<String> extensions = new ArrayList<>();
+		extensions.add("*.rec");
+		fileChooser.getExtensionFilters().clear();
+		ExtensionFilter extensionFilter = new ExtensionFilter("Finance records files.", extensions);
+		fileChooser.getExtensionFilters().add(extensionFilter);
+		fileChooser.setSelectedExtensionFilter(extensionFilter);
+		Window stage = viewSwitchController.getApplicationStage();
+
+		if (isSave) {
+			return fileChooser.showSaveDialog(stage);
+		} else {
+			return fileChooser.showOpenDialog(stage);
 		}
 	}
 }

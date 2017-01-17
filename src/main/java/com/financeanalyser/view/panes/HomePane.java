@@ -1,6 +1,5 @@
 package com.financeanalyser.view.panes;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -14,7 +13,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
 
 public class HomePane extends AnchorPane {
 	private static final Logger LOG = LogManager.getLogger(HomePane.class);
@@ -41,22 +39,13 @@ public class HomePane extends AnchorPane {
 
 	@FXML
 	public void loadRecordAction(ActionEvent event) {
-		File file = showFilePicker();
-		if (file != null) {
-			Optional<Record> record = viewSwitchController.getFileManager().openRecord(file);
-			if (record.isPresent()) {
-				viewSwitchController.recordOverviewScreen(record.get());
-			} else {
-				// TODO
-			}
+		Optional<Record> record = viewSwitchController.getFileManager().openRecord(viewSwitchController);
+		if (record.isPresent()) {
+			viewSwitchController.recordOverviewScreen(record.get());
+		} else {
+			// TODO
 		}
 		event.consume();
-	}
-
-	private File showFilePicker() {
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Open Record File");
-		return fileChooser.showOpenDialog(viewSwitchController.getApplicationStage());
 	}
 
 	private void initialiseFX() {

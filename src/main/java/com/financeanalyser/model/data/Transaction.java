@@ -3,8 +3,6 @@ package com.financeanalyser.model.data;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import com.financeanalyser.components.SerializableStringProperty;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,9 +27,9 @@ public class Transaction {
 	/*
 	 * Extra properties needed for table.
 	 */
-	private SerializableStringProperty transactionType = new SerializableStringProperty("");
+	private StringProperty transactionType = new SimpleStringProperty("");
 
-	private SerializableStringProperty amountString = new SerializableStringProperty("");
+	private StringProperty amountString = new SimpleStringProperty("");
 
 	/**
 	 * Constructor method, requires core information regarding the transaction.

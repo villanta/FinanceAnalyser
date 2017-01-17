@@ -37,9 +37,4 @@ public class FinanceConfig {
 	private void loadUsername(Properties config) {
 		userName.set(config.getProperty(USERNAME_PROPERTY_KEY, DEFAULT_USERNAME));
 	}
-
-	private void save(File file) {
-		// TODO
-	}
-
 }

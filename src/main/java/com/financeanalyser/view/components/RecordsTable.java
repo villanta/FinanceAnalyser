@@ -20,11 +20,11 @@ public class RecordsTable extends TableView<Transaction> {
 	private void initialiseColumns() {
 		TableColumn<Transaction, String> typeColumn = createTypeColumn();
 		TableColumn<Transaction, String> amountColumn = createAmountColumn();
-		TableColumn<Transaction, String> nameColumn = createNameColumn();
 		TableColumn<Transaction, String> dateColumn = createDateColumn();
+		TableColumn<Transaction, String> nameColumn = createNameColumn();
 		TableColumn<Transaction, String> noteColumn = createNoteColumn();
 
-		this.getColumns().addAll(typeColumn, amountColumn, nameColumn, dateColumn, noteColumn);
+		this.getColumns().addAll(typeColumn, amountColumn, dateColumn, nameColumn, noteColumn);
 		this.setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 	}
 
