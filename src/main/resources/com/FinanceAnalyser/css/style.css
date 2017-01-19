@@ -5,11 +5,16 @@
 
 .titleLabel{
 	-fx-font-size: 30.0;
-	fx-text-fill: black;
+	-fx-text-fill: black;
 }
 
 .bigButton {
 	-fx-font-size: 20.0;
+}
+
+.text-field:invalid {
+	-fx-border-color: red ;  
+ 	-fx-border-width: 2.0px ;  
 }
 
 .typeCol {

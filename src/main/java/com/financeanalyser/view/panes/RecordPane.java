@@ -1,12 +1,15 @@
 package com.financeanalyser.view.panes;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
+import com.financeanalyser.view.AdvancedFilterListener;
+import com.financeanalyser.view.components.AdvancedFilter;
 import com.financeanalyser.view.components.RecordsTable;
 import com.financeanalyser.view.components.TransactionCreationBar;
 import com.financeanalyser.view.components.TransactionCreationBarListener;
@@ -21,7 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
-public class RecordPane extends AnchorPane implements TransactionCreationBarListener {
+public class RecordPane extends AnchorPane implements TransactionCreationBarListener, AdvancedFilterListener {
 
 	private static final int NOTE_COLUMN_ID = 4;
 	private static final int NAME_COLUMN_ID = 3;
@@ -57,6 +60,9 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 	@FXML
 	private TransactionCreationBar bar;
 
+	@FXML
+	private AdvancedFilter filterPane;
+
 	private FAViewSwitchController viewSwitchController;
 	private RecordsTable recordsTable;
 	private Record record;
@@ -67,7 +73,7 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 		this.viewSwitchController = faViewSwitchController;
 		this.record = record;
 
-		loadView();
+		loadFXML();
 		initialiseFX();
 	}
 
@@ -91,6 +97,16 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 	public void typeFilterUpdate(KeyEvent event) {
 		String filter = typeFilterField.getText();
 		record.setTypeFilter(filter);
+		updateRecordsTable();
+	}
+
+	@Override
+	public void updateAdvancedFilter(FilterType type, Function<Transaction, Boolean> filterFunction) {
+		if (FilterType.DATE.equals(type)) {
+			record.setAdvancedDateFilterFunction(filterFunction);
+		} else {
+			record.setAdvancedAmmountFilterFunction(filterFunction);
+		}
 		updateRecordsTable();
 	}
 
@@ -127,7 +143,12 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 		initialiseFilters();
 		bar.addListener(this);
 		initialiseNetLabels();
+		initialiseFilterPane();
 		updateRecordsTable();
+	}
+
+	private void initialiseFilterPane() {
+		filterPane.setListener(this);
 	}
 
 	private void initialiseNetLabels() {
@@ -163,7 +184,7 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 		recordTablePane.getChildren().add(recordsTable);
 	}
 
-	private void loadView() {
+	private void loadFXML() {
 		setPrefSize(1920, 1080);
 
 		FXMLLoader loader = new FXMLLoader(getClass().getResource(RECORD_PANE_FXML_LOCATION));

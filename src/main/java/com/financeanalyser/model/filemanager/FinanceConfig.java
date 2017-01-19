@@ -1,6 +1,5 @@
 package com.financeanalyser.model.filemanager;
 
-import java.io.File;
 import java.util.Properties;
 
 import javafx.beans.property.SimpleStringProperty;

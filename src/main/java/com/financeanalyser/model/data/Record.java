@@ -3,6 +3,7 @@ package com.financeanalyser.model.data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
@@ -16,6 +17,9 @@ public class Record {
 	private String dateFilterString = "";
 	private String nameFilterString = "";
 	private String noteFilterString = "";
+
+	private Function<Transaction, Boolean> advancedDateFilterFunction;
+	private Function<Transaction, Boolean> advancedAmmountFilterFunction;
 
 	public Record() {
 		this.records = new ArrayList<>();
@@ -32,6 +36,7 @@ public class Record {
 	public ObservableList<Transaction> getFilteredRecord() {
 		List<Transaction> transactions = records.stream().filter(this::applyTypeFilter).filter(this::applyAmountFilter)
 				.filter(this::applyDateFilter).filter(this::applyNameFilter).filter(this::applyNoteFilter)
+				.filter(this::applyAdvancedDateFilter).filter(this::applyAdvancedAmmountFilter)
 				.collect(Collectors.toList());
 
 		ObservableList<Transaction> list = FXCollections.observableArrayList();
@@ -77,6 +82,22 @@ public class Record {
 
 	public String getNoteFilterString() {
 		return noteFilterString;
+	}
+
+	public Function<Transaction, Boolean> getAdvancedDateFilterFunction() {
+		return advancedDateFilterFunction;
+	}
+
+	public void setAdvancedDateFilterFunction(Function<Transaction, Boolean> advancedDateFilterFunction) {
+		this.advancedDateFilterFunction = advancedDateFilterFunction;
+	}
+
+	public Function<Transaction, Boolean> getAdvancedAmmountFilterFunction() {
+		return advancedAmmountFilterFunction;
+	}
+
+	public void setAdvancedAmmountFilterFunction(Function<Transaction, Boolean> advancedAmmountFilterFunction) {
+		this.advancedAmmountFilterFunction = advancedAmmountFilterFunction;
 	}
 
 	private boolean applyTypeFilter(Transaction transaction) {
@@ -163,5 +184,21 @@ public class Record {
 
 	private boolean applyNoteFilter(Transaction transaction) {
 		return noteFilterString.isEmpty() || transaction.getNote().toUpperCase().contains(noteFilterString);
+	}
+
+	private boolean applyAdvancedDateFilter(Transaction t) {
+		if (advancedDateFilterFunction != null) {
+			return advancedDateFilterFunction.apply(t);
+		} else {
+			return true;
+		}
+	}
+
+	private boolean applyAdvancedAmmountFilter(Transaction t) {
+		if (advancedAmmountFilterFunction != null) {
+			return advancedAmmountFilterFunction.apply(t);
+		} else {
+			return true;
+		}
 	}
 }
