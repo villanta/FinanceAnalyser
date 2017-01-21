@@ -71,23 +71,27 @@ public class AdvancedFilter extends AnchorPane {
 	@FXML
 	protected void fromAmmountUpdated(ActionEvent event) {
 		updateFromAmmount();
+		updateToAmmount();
 		event.consume();
 	}
 
 	@FXML
 	protected void fromAmmountUpdatedKB(KeyEvent event) {
 		updateFromAmmount();
+		updateToAmmount();
 	}
 
 	@FXML
 	protected void toAmmountUpdated(ActionEvent event) {
 		updateToAmmount();
+		updateFromAmmount();
 		event.consume();
 	}
 
 	@FXML
 	protected void toAmmountUpdatedKB(KeyEvent event) {
 		updateToAmmount();
+		updateFromAmmount();
 	}
 
 	private void updateAmmountFilter() {

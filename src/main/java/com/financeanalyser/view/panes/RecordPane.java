@@ -10,6 +10,7 @@ import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
 import com.financeanalyser.view.AdvancedFilterListener;
 import com.financeanalyser.view.components.AdvancedFilter;
+import com.financeanalyser.view.components.ChartPane;
 import com.financeanalyser.view.components.RecordsTable;
 import com.financeanalyser.view.components.TransactionCreationBar;
 import com.financeanalyser.view.components.TransactionCreationBarListener;
@@ -62,6 +63,9 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 
 	@FXML
 	private AdvancedFilter filterPane;
+	
+	@FXML
+	private ChartPane chartPane;
 
 	private FAViewSwitchController viewSwitchController;
 	private RecordsTable recordsTable;
@@ -144,7 +148,12 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 		bar.addListener(this);
 		initialiseNetLabels();
 		initialiseFilterPane();
+		initialiseChartPane();
 		updateRecordsTable();
+	}
+
+	private void initialiseChartPane() {
+		chartPane.setRecord(record);
 	}
 
 	private void initialiseFilterPane() {

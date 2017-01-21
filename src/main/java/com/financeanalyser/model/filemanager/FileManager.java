@@ -89,6 +89,9 @@ public class FileManager {
 
 	public boolean saveRecord(Record record, FAViewSwitchController viewSwitchController) {
 		File file = showFilePicker(true, viewSwitchController);
+		if (file == null) {
+			return false;
+		}
 		try (FileWriter fw = new FileWriter(file)) {
 			BufferedWriter bw = new BufferedWriter(fw);
 
