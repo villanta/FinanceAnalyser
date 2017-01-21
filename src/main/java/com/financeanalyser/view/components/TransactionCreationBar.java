@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.financeanalyser.model.data.Transaction;
 import com.financeanalyser.model.data.TransactionType;
+import com.financeanalyser.view.components.listeners.TransactionCreationBarListener;
 
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;

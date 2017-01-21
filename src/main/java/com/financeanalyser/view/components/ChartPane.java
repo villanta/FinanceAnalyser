@@ -8,6 +8,8 @@ import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 
 import com.financeanalyser.model.data.Record;
+import com.financeanalyser.view.components.listeners.PopupChartListener;
+import com.financeanalyser.view.components.popovers.PieChartPopover;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

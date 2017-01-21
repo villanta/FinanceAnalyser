@@ -13,7 +13,7 @@ import com.financeanalyser.view.components.AdvancedFilter;
 import com.financeanalyser.view.components.ChartPane;
 import com.financeanalyser.view.components.RecordsTable;
 import com.financeanalyser.view.components.TransactionCreationBar;
-import com.financeanalyser.view.components.TransactionCreationBarListener;
+import com.financeanalyser.view.components.listeners.TransactionCreationBarListener;
 import com.financeanalyser.view.viewswitchcontroller.FAViewSwitchController;
 
 import javafx.event.ActionEvent;

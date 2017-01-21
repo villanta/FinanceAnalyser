@@ -1,4 +1,4 @@
-package com.financeanalyser.view.components;
+package com.financeanalyser.view.components.listeners;
 
 import javafx.scene.Node;
 

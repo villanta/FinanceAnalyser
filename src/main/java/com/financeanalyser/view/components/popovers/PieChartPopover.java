@@ -1,4 +1,4 @@
-package com.financeanalyser.view.components;
+package com.financeanalyser.view.components.popovers;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -14,6 +14,7 @@ import org.controlsfx.control.PopOver;
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
 import com.financeanalyser.model.data.TransactionType;
+import com.financeanalyser.view.components.listeners.PopupChartListener;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
