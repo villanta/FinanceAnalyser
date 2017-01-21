@@ -1,6 +1,7 @@
 package com.financeanalyser.view.components.popovers;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 
 public class PieChartPopover extends AnchorPane {
@@ -114,29 +116,51 @@ public class PieChartPopover extends AnchorPane {
 	}
 
 	private void createWeeklyChart(LocalDate startDate, LocalDate endDate) {
-		// TODO
+		List<Transaction> dateFilteredRecord = getDateFilteredRecord(startDate, endDate);
+		if (dateFilteredRecord.isEmpty()) {
+			returnWithFailMessage();
+			return;
+		}
+		Map<String, Integer> typeAmmountMap = getTotalsByType(dateFilteredRecord);
+		addUnspentType(typeAmmountMap);
+
+		final double weekCount = (double) getWeeksCount(dateFilteredRecord);
+		divideTotalBy(typeAmmountMap, weekCount);
+		createPieChartWithData(typeAmmountMap, "Average weekly spending");
 	}
 
 	private void createMonthlyChart(LocalDate startDate, LocalDate endDate) {
-		// TODO Auto-generated method stub
+		List<Transaction> dateFilteredRecord = getDateFilteredRecord(startDate, endDate);
+		if (dateFilteredRecord.isEmpty()) {
+			returnWithFailMessage();
+			return;
+		}
+		Map<String, Integer> typeAmmountMap = getTotalsByType(dateFilteredRecord);
 
+		addUnspentType(typeAmmountMap);
+		final double monthCount = (double) getMonthCount(dateFilteredRecord);
+		divideTotalBy(typeAmmountMap, monthCount);
+		createPieChartWithData(typeAmmountMap, "Average monthly spending");
 	}
 
 	private void createTotalChart(LocalDate startDate, LocalDate endDate) {
 		List<Transaction> dateFilteredRecord = getDateFilteredRecord(startDate, endDate);
+		if (dateFilteredRecord.isEmpty()) {
+			returnWithFailMessage();
+			return;
+		}
 		Map<String, Integer> typeAmmountMap = getTotalsByType(dateFilteredRecord);
 
-		int salaryBasic = typeAmmountMap.getOrDefault(TransactionType.SALARY_BASIC.toString(), 0);
-		typeAmmountMap.remove(TransactionType.SALARY_BASIC.toString());
-
-		int salaryBonus = typeAmmountMap.getOrDefault(TransactionType.SALARY_BONUS.toString(), 0);
-		typeAmmountMap.remove(TransactionType.SALARY_BONUS.toString());
-
-		int totalSpent = typeAmmountMap.entrySet().stream().mapToInt(entry -> entry.getValue()).sum();
-
-		typeAmmountMap.put("Unspent", salaryBasic + salaryBonus - totalSpent);
+		addUnspentType(typeAmmountMap);
 
 		createPieChartWithData(typeAmmountMap, "Total spending");
+	}
+
+	private void returnWithFailMessage() {
+		if (listener != null) {
+			listener.setChartToDisplay(new Label("Failed to create chart with provided data."));
+		}
+		return;
 	}
 
 	private Map<String, Integer> getTotalsByType(List<Transaction> dateFilteredRecord) {
@@ -162,9 +186,67 @@ public class PieChartPopover extends AnchorPane {
 				.collect(Collectors.toList());
 		chart.getData().addAll(data);
 
-		// chart.setHe
-
 		listener.setChartToDisplay(chart);
+	}
+
+	private void addUnspentType(Map<String, Integer> typeAmmountMap) {
+		int salaryBasic = typeAmmountMap.getOrDefault(TransactionType.SALARY_BASIC.toString(), 0);
+		typeAmmountMap.remove(TransactionType.SALARY_BASIC.toString());
+		int salaryBonus = typeAmmountMap.getOrDefault(TransactionType.SALARY_BONUS.toString(), 0);
+		typeAmmountMap.remove(TransactionType.SALARY_BONUS.toString());
+
+		int totalSpent = typeAmmountMap.entrySet().stream().mapToInt(entry -> entry.getValue()).sum();
+		typeAmmountMap.put("Unspent", salaryBasic + salaryBonus - totalSpent);
+	}
+
+	private void divideTotalBy(Map<String, Integer> typeAmmountMap, final double monthCount) {
+		typeAmmountMap.entrySet().stream()
+				.forEach(entry -> typeAmmountMap.put(entry.getKey(), (int) ((double) entry.getValue() / monthCount)));
+	}
+
+	private int getWeeksCount(List<Transaction> dateFilteredRecord) {
+		LocalDate opStartDate = dateFilteredRecord.stream().sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
+				.findFirst().get().getDate();
+
+		LocalDate opEndDate = dateFilteredRecord.stream().sorted((t1, t2) -> t2.getDate().compareTo(t1.getDate()))
+				.findFirst().get().getDate();
+
+		int weeks = 0;
+		if (DayOfWeek.MONDAY.equals(opEndDate.getDayOfWeek())) {
+			weeks++;
+		}
+		while (!(opEndDate = opEndDate.minusDays(1)).isBefore(opStartDate)) {
+			if (DayOfWeek.MONDAY.equals(opEndDate.getDayOfWeek())) {
+				weeks++;
+			}
+		}
+		if (!DayOfWeek.MONDAY.equals(opEndDate.getDayOfWeek())) {
+			weeks++;
+		}
+
+		LOG.info("Weeks: " + weeks);
+		return weeks;
+	}
+
+	private int getMonthCount(List<Transaction> dateFilteredRecord) {
+		LocalDate opStartDate = dateFilteredRecord.stream().sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
+				.findFirst().get().getDate();
+
+		LocalDate opEndDate = dateFilteredRecord.stream().sorted((t1, t2) -> t2.getDate().compareTo(t1.getDate()))
+				.findFirst().get().getDate();
+
+		int yearsTotal = opEndDate.getYear() - opStartDate.getYear();
+		int monthsTotal = 0;
+		if (opEndDate.getMonthValue() < opStartDate.getMonthValue()) {
+			monthsTotal += 1 + opEndDate.getMonthValue();
+			monthsTotal += 12 - opStartDate.getMonthValue();
+			yearsTotal--;
+		} else {
+			monthsTotal = opEndDate.getMonthValue() - opStartDate.getMonthValue();
+		}
+
+		monthsTotal += yearsTotal * 12;
+		return monthsTotal;
 	}
 
 	private void setStartDateInvalid(boolean invalid) {

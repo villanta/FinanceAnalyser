@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -26,6 +27,11 @@ import javafx.stage.Window;
 
 public class FileManager {
 	private static final Logger LOG = LogManager.getLogger(FileManager.class);
+
+	public static final ExtensionFilter RECORD_FILTER = new ExtensionFilter("Finance records files.",
+			Arrays.asList("*.rec"));
+	public static final ExtensionFilter CSV_FILTER = new ExtensionFilter("CSV Bank files.",
+			Arrays.asList("*.csv"));
 
 	private static final String DEFAULT_WINDOWS_LOCATION_ENV = "APPDATA";
 	private static final String APPLICATION_FOLDER = "/FinanceAnalyser";
@@ -88,7 +94,7 @@ public class FileManager {
 	}
 
 	public boolean saveRecord(Record record, FAViewSwitchController viewSwitchController) {
-		File file = showFilePicker(true, viewSwitchController);
+		File file = showFilePicker(true, viewSwitchController, RECORD_FILTER);
 		if (file == null) {
 			return false;
 		}
@@ -97,7 +103,6 @@ public class FileManager {
 
 			for (Transaction t : record.getRecord()) {
 				bw.write(t.toFileString());
-				bw.newLine();
 			}
 			bw.flush();
 		} catch (FileNotFoundException e) {
@@ -112,7 +117,7 @@ public class FileManager {
 	}
 
 	public Optional<Record> openRecord(FAViewSwitchController viewSwitchController) {
-		File file = showFilePicker(false, viewSwitchController);
+		File file = showFilePicker(false, viewSwitchController, RECORD_FILTER);
 		try (FileReader fr = new FileReader(file)) {
 			BufferedReader br = new BufferedReader(fr);
 
@@ -136,17 +141,13 @@ public class FileManager {
 		}
 	}
 
-	private File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController) {
+	private File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController,
+			ExtensionFilter... extensionFilters) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File(System.getenv(DEFAULT_WINDOWS_LOCATION_ENV) + APPLICATION_FOLDER));
 		fileChooser.setTitle("Open Record File");
 
-		List<String> extensions = new ArrayList<>();
-		extensions.add("*.rec");
-		fileChooser.getExtensionFilters().clear();
-		ExtensionFilter extensionFilter = new ExtensionFilter("Finance records files.", extensions);
-		fileChooser.getExtensionFilters().add(extensionFilter);
-		fileChooser.setSelectedExtensionFilter(extensionFilter);
+		fileChooser.getExtensionFilters().addAll(extensionFilters);
 		Window stage = viewSwitchController.getApplicationStage();
 
 		if (isSave) {

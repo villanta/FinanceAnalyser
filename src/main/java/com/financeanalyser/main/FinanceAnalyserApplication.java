@@ -14,6 +14,7 @@ public class FinanceAnalyserApplication extends Application {
 
 	public static void main(String[] args) {
 		LOG.info("Initialising application...");
+
 		launch(args);
 	}
 
