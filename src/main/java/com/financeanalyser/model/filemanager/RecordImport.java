@@ -21,7 +21,7 @@ public class RecordImport {
 	private static final Logger LOG = LogManager.getLogger(RecordImport.class);
 	
 	public List<Transaction> importFile(FAViewSwitchController viewSwitchController) {
-		File file = FileManager.showFilePicker(false, viewSwitchController, CSV_FILTER); // open file
+		File file = FileManager.showFilePicker(false, viewSwitchController, FileManager.CSV_FILTER); // open file
 		List<String> lines = readFileToLines(file); // read file
 		List<Transaction> importedFile = process(lines); // process contents
 		
@@ -34,7 +34,8 @@ public class RecordImport {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))){
 			String line;
 			while((line = br.readLine()) != null) {
-				lines.add(line);
+				if(!line.startsWith("#"))
+					lines.add(line);
 			}
 		} catch(IOException e) {
 			LOG.error("Error while reading imported file to lines.", e);

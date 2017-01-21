@@ -26,6 +26,7 @@ public enum TransactionType {
 		types.add(TAKEAWAY);
 		types.add(ENTERTAINMENT);
 		types.add(CASH);
+		types.add(OTHER);
 
 		return types;
 	}

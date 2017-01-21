@@ -140,7 +140,7 @@ public class FileManager {
 	}
 
 
-	private static File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController,
+	public static File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController,
 			ExtensionFilter... extensionFilters) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File(System.getenv(DEFAULT_WINDOWS_LOCATION_ENV) + APPLICATION_FOLDER));

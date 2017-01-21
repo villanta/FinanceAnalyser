@@ -19,8 +19,8 @@ public class HalifaxTransactionReader implements TransactionReader {
 		String[] transactionFields = transaction.split(",");
 		
 		LocalDate date = parseDate(transactionFields[0]);
-		int amount = parseAmount(transactionFields[5], transactionFields[6]);
-		TransactionType type = parseType(transactionFields[1], transactionFields[4]);
+		TransactionType type = parseType(transactionFields[1], transactionFields[4]);	
+		int amount = parseAmount(transactionFields[5], transactionFields[6], type);
 		String name = parseName(transactionFields[4]);
 		String note = "imported transaction"; //TODO find more meaningful note
 		
@@ -33,10 +33,10 @@ public class HalifaxTransactionReader implements TransactionReader {
 
 	private TransactionType parseType(String transactionType, String name) {
 		List<String> groceryList = Arrays.asList("SPAR", "CDE");
-		List<String> entertainmentList = Arrays.asList("NETFLIX", "ODEON", "");
+		List<String> entertainmentList = Arrays.asList("NETFLIX", "ODEON");
 		List<String> rentList = Arrays.asList("LETTINGS");
 		List<String> billsList = Arrays.asList("STOCKPORT MBC", "VIRGIN");
-		List<String> takeawayList = Arrays.asList("JUST-EAT", "");
+		List<String> takeawayList = Arrays.asList("JUST-EAT");
 		
 		if("CASHPOINT".equals(transactionType.toUpperCase()))
 			return TransactionType.CASH;
@@ -56,11 +56,12 @@ public class HalifaxTransactionReader implements TransactionReader {
 		return TransactionType.OTHER;
 	}
 
-	private int parseAmount(String moneyOut, String moneyIn) {
+	private int parseAmount(String moneyOut, String moneyIn, TransactionType tt) {
 		if(moneyIn.isEmpty())
 			return parseInt(moneyOut);
-		else
+		else if(moneyOut.isEmpty() && TransactionType.SALARY_BASIC.equals(tt))
 			return parseInt(moneyIn);
+		else return 0;
 	}
 
 	private int parseInt(String transactionAmount){
