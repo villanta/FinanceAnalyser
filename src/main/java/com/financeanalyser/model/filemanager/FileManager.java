@@ -136,7 +136,7 @@ public class FileManager {
 		}
 	}
 
-	private File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController) {
+	public static File showFilePicker(boolean isSave, FAViewSwitchController viewSwitchController) {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File(System.getenv(DEFAULT_WINDOWS_LOCATION_ENV) + APPLICATION_FOLDER));
 		fileChooser.setTitle("Open Record File");

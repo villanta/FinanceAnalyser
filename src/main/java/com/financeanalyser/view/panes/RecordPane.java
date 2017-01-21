@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
+import com.financeanalyser.model.filemanager.RecordImport;
 import com.financeanalyser.view.AdvancedFilterListener;
 import com.financeanalyser.view.components.AdvancedFilter;
 import com.financeanalyser.view.components.ChartPane;
@@ -102,6 +103,14 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 		String filter = typeFilterField.getText();
 		record.setTypeFilter(filter);
 		updateRecordsTable();
+	}
+	
+	@FXML
+	public void importRecordAction(ActionEvent event) {
+		RecordImport ri = new RecordImport();
+		record.getRecord().addAll(ri.importFile(viewSwitchController));
+		updateRecordsTable();
+		event.consume();
 	}
 
 	@Override

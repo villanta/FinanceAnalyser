@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 public enum TransactionType {
-	SALARY_BASIC("Basic salary"), SALARY_BONUS("Bonus salary"), RENT("Rent"), BILLS("Bills"), GROCERIES(
-			"Groceries"), TAKEAWAY("Takeaway"), ENTERTAINMENT("Entertainment"), CASH("Cash"), UNKNOWN("Unknown");
+	SALARY_BASIC("Basic salary"), SALARY_BONUS("Bonus salary"), RENT("Rent"), BILLS("Bills"), 
+	GROCERIES("Groceries"), TAKEAWAY("Takeaway"), ENTERTAINMENT("Entertainment"), CASH("Cash"),
+	OTHER("Other"), UNKNOWN("Unknown");
 
 	private String label;
 
