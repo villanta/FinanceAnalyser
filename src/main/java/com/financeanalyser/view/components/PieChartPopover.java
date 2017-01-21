@@ -6,12 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.controlsfx.control.PopOver;
 
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
@@ -103,18 +101,19 @@ public class PieChartPopover extends AnchorPane {
 				break;
 			}
 		}
+		PopOver popover = ((PopOver) getScene().getWindow());
+		popover.hide();
 		event.consume();
 	}
 
-	private void createWeeklyChart(LocalDate startDate, LocalDate endDate) {
-
-	}
-
 	private List<Transaction> getDateFilteredRecord(LocalDate startDate, LocalDate endDate) {
-		List<Transaction> dateFilteredRecord = record.getRecord().stream().filter(transaction -> {
+		return record.getRecord().stream().filter(transaction -> {
 			return !transaction.getDate().isBefore(startDate) && !transaction.getDate().isAfter(endDate);
 		}).collect(Collectors.toList());
-		return dateFilteredRecord;
+	}
+
+	private void createWeeklyChart(LocalDate startDate, LocalDate endDate) {
+		// TODO
 	}
 
 	private void createMonthlyChart(LocalDate startDate, LocalDate endDate) {
@@ -124,22 +123,7 @@ public class PieChartPopover extends AnchorPane {
 
 	private void createTotalChart(LocalDate startDate, LocalDate endDate) {
 		List<Transaction> dateFilteredRecord = getDateFilteredRecord(startDate, endDate);
-
-		Map<String, Integer> typeAmmountMap = new HashMap<>();
-
-		for (TransactionType type : TransactionType.getAllTypes()) {
-			Stream<Transaction> matchingTransactionTypeStream = dateFilteredRecord.stream()
-					.filter(transaction -> type == transaction.getType());
-
-			matchingTransactionTypeStream = dateFilteredRecord.stream()
-					.filter(transaction -> type.equals(transaction.getType()));
-			if (!(matchingTransactionTypeStream.count() == 0)) {
-				matchingTransactionTypeStream = dateFilteredRecord.stream()
-						.filter(transaction -> type.equals(transaction.getType()));
-				int totalAmmount = matchingTransactionTypeStream.mapToInt(t -> t.getCentAmount()).sum();
-				typeAmmountMap.put(type.toString(), totalAmmount);
-			}
-		}
+		Map<String, Integer> typeAmmountMap = getTotalsByType(dateFilteredRecord);
 
 		int salaryBasic = typeAmmountMap.getOrDefault(TransactionType.SALARY_BASIC.toString(), 0);
 		typeAmmountMap.remove(TransactionType.SALARY_BASIC.toString());
@@ -147,21 +131,33 @@ public class PieChartPopover extends AnchorPane {
 		int salaryBonus = typeAmmountMap.getOrDefault(TransactionType.SALARY_BONUS.toString(), 0);
 		typeAmmountMap.remove(TransactionType.SALARY_BONUS.toString());
 
-		int totalSpent = 0;
-		for (String type : typeAmmountMap.keySet()) {
-			totalSpent += typeAmmountMap.get(type);
-		}
+		int totalSpent = typeAmmountMap.entrySet().stream().mapToInt(entry -> entry.getValue()).sum();
 
-		int totalUnspent = salaryBasic + salaryBonus - totalSpent;
-		typeAmmountMap.put("Unspent", totalUnspent);
+		typeAmmountMap.put("Unspent", salaryBasic + salaryBonus - totalSpent);
 
 		createPieChartWithData(typeAmmountMap, "Total spending");
+	}
+
+	private Map<String, Integer> getTotalsByType(List<Transaction> dateFilteredRecord) {
+		Map<String, Integer> typeAmmountMap = new HashMap<>();
+
+		for (TransactionType type : TransactionType.getAllTypes()) {
+			List<Transaction> dateAndTypeFiltered = dateFilteredRecord.stream()
+					.filter(transaction -> type.equals(transaction.getType())).collect(Collectors.toList());
+			if (!dateAndTypeFiltered.isEmpty()) {
+				int totalAmmount = dateAndTypeFiltered.stream().mapToInt(t -> t.getCentAmount()).sum();
+				typeAmmountMap.put(type.toString(), totalAmmount);
+			}
+		}
+		return typeAmmountMap;
 	}
 
 	private void createPieChartWithData(Map<String, Integer> typeAmmountMap, String title) {
 		PieChart chart = new PieChart();
 		chart.setTitle(title);
-		List<Data> data = typeAmmountMap.entrySet().stream().map(entry -> new Data(entry.getKey(), entry.getValue()))
+		List<Data> data = typeAmmountMap.entrySet().stream()
+				.map(entry -> new Data(entry.getKey().concat(String.format(": %.2f", (entry.getValue() / 100.0))),
+						entry.getValue()))
 				.collect(Collectors.toList());
 		chart.getData().addAll(data);
 
