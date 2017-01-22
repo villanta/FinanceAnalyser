@@ -110,7 +110,7 @@ public class PieChartPopover extends AnchorPane {
 	}
 
 	private List<Transaction> getDateFilteredRecord(LocalDate startDate, LocalDate endDate) {
-		return record.getRecord().stream().filter(transaction -> {
+		return record.getFilteredRecord().stream().filter(transaction -> {
 			return !transaction.getDate().isBefore(startDate) && !transaction.getDate().isAfter(endDate);
 		}).collect(Collectors.toList());
 	}
@@ -138,7 +138,7 @@ public class PieChartPopover extends AnchorPane {
 		Map<String, Integer> typeAmmountMap = getTotalsByType(dateFilteredRecord);
 
 		addUnspentType(typeAmmountMap);
-		final double monthCount = (double) getMonthCount(dateFilteredRecord);
+		final double monthCount = getMonthCount(dateFilteredRecord);
 		divideTotalBy(typeAmmountMap, monthCount);
 		createPieChartWithData(typeAmmountMap, "Average monthly spending");
 	}
@@ -181,8 +181,9 @@ public class PieChartPopover extends AnchorPane {
 		PieChart chart = new PieChart();
 		chart.setTitle(title);
 		List<Data> data = typeAmmountMap.entrySet().stream()
-				.map(entry -> new Data(entry.getKey().concat(String.format(": %.2f", (entry.getValue() / 100.0))),
-						entry.getValue()))
+				.map(entry -> new Data(
+						entry.getKey().concat(String.format(": %.2f", (Math.abs(entry.getValue() / 100.0)))),
+						Math.abs(entry.getValue())))
 				.collect(Collectors.toList());
 		chart.getData().addAll(data);
 
@@ -190,18 +191,18 @@ public class PieChartPopover extends AnchorPane {
 	}
 
 	private void addUnspentType(Map<String, Integer> typeAmmountMap) {
-		int salaryBasic = typeAmmountMap.getOrDefault(TransactionType.SALARY_BASIC.toString(), 0);
-		typeAmmountMap.remove(TransactionType.SALARY_BASIC.toString());
-		int salaryBonus = typeAmmountMap.getOrDefault(TransactionType.SALARY_BONUS.toString(), 0);
-		typeAmmountMap.remove(TransactionType.SALARY_BONUS.toString());
+		int unspent = typeAmmountMap.entrySet().stream().mapToInt(entry -> entry.getValue()).sum();
 
-		int totalSpent = typeAmmountMap.entrySet().stream().mapToInt(entry -> entry.getValue()).sum();
-		typeAmmountMap.put("Unspent", salaryBasic + salaryBonus - totalSpent);
+		typeAmmountMap.remove(TransactionType.SALARY_BASIC.toString());
+		typeAmmountMap.remove(TransactionType.SALARY_BONUS.toString());
+		typeAmmountMap.remove(TransactionType.TRANSFER_IN.toString());
+
+		typeAmmountMap.put("Unspent", unspent);
 	}
 
-	private void divideTotalBy(Map<String, Integer> typeAmmountMap, final double monthCount) {
-		typeAmmountMap.entrySet().stream()
-				.forEach(entry -> typeAmmountMap.put(entry.getKey(), (int) ((double) entry.getValue() / monthCount)));
+	private void divideTotalBy(Map<String, Integer> typeAmmountMap, final double amountToDivideBy) {
+		typeAmmountMap.entrySet().stream().forEach(
+				entry -> typeAmmountMap.put(entry.getKey(), (int) ((double) entry.getValue() / amountToDivideBy)));
 	}
 
 	private int getWeeksCount(List<Transaction> dateFilteredRecord) {
@@ -228,25 +229,20 @@ public class PieChartPopover extends AnchorPane {
 		return weeks;
 	}
 
-	private int getMonthCount(List<Transaction> dateFilteredRecord) {
+	private double getMonthCount(List<Transaction> dateFilteredRecord) {
 		LocalDate opStartDate = dateFilteredRecord.stream().sorted((t1, t2) -> t1.getDate().compareTo(t2.getDate()))
 				.findFirst().get().getDate();
 
 		LocalDate opEndDate = dateFilteredRecord.stream().sorted((t1, t2) -> t2.getDate().compareTo(t1.getDate()))
 				.findFirst().get().getDate();
 
-		int yearsTotal = opEndDate.getYear() - opStartDate.getYear();
-		int monthsTotal = 0;
-		if (opEndDate.getMonthValue() < opStartDate.getMonthValue()) {
-			monthsTotal += 1 + opEndDate.getMonthValue();
-			monthsTotal += 12 - opStartDate.getMonthValue();
-			yearsTotal--;
-		} else {
-			monthsTotal = opEndDate.getMonthValue() - opStartDate.getMonthValue();
+		int days = 0;
+		while (!(opEndDate = opEndDate.minusDays(1)).isBefore(opStartDate)) {
+			days++;
 		}
 
-		monthsTotal += yearsTotal * 12;
-		return monthsTotal;
+		LOG.info("Days: " + days);
+		return days / 30.5;
 	}
 
 	private void setStartDateInvalid(boolean invalid) {

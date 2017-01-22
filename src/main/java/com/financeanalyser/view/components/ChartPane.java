@@ -9,6 +9,7 @@ import org.controlsfx.control.PopOver.ArrowLocation;
 
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.view.components.listeners.PopupChartListener;
+import com.financeanalyser.view.components.popovers.LineChartPopover;
 import com.financeanalyser.view.components.popovers.PieChartPopover;
 
 import javafx.event.ActionEvent;
@@ -25,6 +26,8 @@ public class ChartPane extends AnchorPane implements PopupChartListener {
 
 	@FXML
 	private Button pieChartButton;
+	@FXML
+	private Button lineChartButton;
 
 	@FXML
 	private AnchorPane chartPane;
@@ -55,6 +58,14 @@ public class ChartPane extends AnchorPane implements PopupChartListener {
 	@FXML
 	public void createPieChart(ActionEvent event) {
 		PopOver p = new PopOver(new PieChartPopover(record, this));
+		p.setArrowLocation(ArrowLocation.TOP_LEFT);
+		p.show(pieChartButton);
+		event.consume();
+	}
+	
+	@FXML
+	public void createLineChart(ActionEvent event) {
+		PopOver p = new PopOver(new LineChartPopover(record, this));
 		p.setArrowLocation(ArrowLocation.TOP_LEFT);
 		p.show(pieChartButton);
 		event.consume();

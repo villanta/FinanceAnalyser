@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 public enum TransactionType {
-	SALARY_BASIC("Basic salary"), SALARY_BONUS("Bonus salary"), RENT("Rent"), BILLS("Bills"), 
-	GROCERIES("Groceries"), TAKEAWAY("Takeaway"), ENTERTAINMENT("Entertainment"), CASH("Cash"),
-	OTHER("Other"), UNKNOWN("Unknown");
+	SALARY_BASIC("Basic salary"), SALARY_BONUS("Bonus salary"), RENT("Rent"), BILLS("Bills"), GROCERIES(
+			"Groceries"), TAKEAWAY("Takeaway"), ENTERTAINMENT("Entertainment"), CASH("Cash"), TRAVEL(
+					"Travel"), CLOTHING("Clothing"), HEALTH_ADMIN("Health and Admin"), SAVINGS("Savings"), TRANSFER_IN(
+							"Transfer in"), TRANSFER_OUT("Transfer out"), OTHER(
+									"Other"), UNKNOWN("Unknown"), HOME("Home Furniture and Electronics");
 
 	private String label;
 
@@ -26,6 +28,13 @@ public enum TransactionType {
 		types.add(TAKEAWAY);
 		types.add(ENTERTAINMENT);
 		types.add(CASH);
+		types.add(TRAVEL);
+		types.add(CLOTHING);
+		types.add(HEALTH_ADMIN);
+		types.add(SAVINGS);
+		types.add(TRANSFER_IN);
+		types.add(TRANSFER_OUT);
+		types.add(HOME);
 		types.add(OTHER);
 
 		return types;

@@ -55,6 +55,17 @@ public class RecordsTable extends TableView<Transaction> {
 	private TableColumn<Transaction, String> createAmountColumn() {
 		TableColumn<Transaction, String> amountColumn = new TableColumn<>("Amount");
 		amountColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("amount"));
+		amountColumn.setComparator((str1, str2) -> {
+			double val = Double.parseDouble(str1) - Double.parseDouble(str2);
+			if (val < 0) {
+				return -1;
+			} else if (val > 0) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+
 		amountColumn.getStyleClass().add("amountCol");
 		amountColumn.setMaxWidth(COLUMN_WIDTH_SMALL);
 		return amountColumn;

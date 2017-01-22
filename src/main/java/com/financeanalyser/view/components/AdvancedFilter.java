@@ -96,8 +96,8 @@ public class AdvancedFilter extends AnchorPane {
 
 	private void updateAmmountFilter() {
 		Function<Transaction, Boolean> filter = transaction -> {
-			boolean isMinValid = transaction.getCentAmount() >= min;
-			boolean isMaxValid = transaction.getCentAmount() <= max;
+			boolean isMinValid = Math.abs(transaction.getCentAmount()) >= min;
+			boolean isMaxValid = Math.abs(transaction.getCentAmount()) <= max;
 
 			return isMinValid && isMaxValid;
 		};
