@@ -1,4 +1,4 @@
-package com.financeanalyser.view.components;
+package com.financeanalyser.view.components.controls;
 
 import java.io.IOException;
 import java.time.LocalDate;

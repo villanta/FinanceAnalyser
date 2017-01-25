@@ -1,4 +1,4 @@
-package com.financeanalyser.view.components;
+package com.financeanalyser.view.components.controls;
 
 import com.financeanalyser.model.data.Transaction;
 
@@ -8,7 +8,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 public class RecordsTable extends TableView<Transaction> {
 
-	private static final double COLUMN_WIDTH_SMALL = 300.0;
+	private static final double COLUMN_WIDTH_SMALL = 200.0;
+	private static final double COLUMN_WIDTH_MEDIUM = 300.0;
 
 	public RecordsTable() {
 		super();
@@ -32,7 +33,6 @@ public class RecordsTable extends TableView<Transaction> {
 		TableColumn<Transaction, String> noteColumn = new TableColumn<>("Note");
 		noteColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("note"));
 		noteColumn.getStyleClass().add("noteCol");
-		noteColumn.setPrefWidth(1000.0);
 		return noteColumn;
 	}
 
@@ -40,7 +40,7 @@ public class RecordsTable extends TableView<Transaction> {
 		TableColumn<Transaction, String> dateColumn = new TableColumn<>("Date");
 		dateColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("dateString"));
 		dateColumn.getStyleClass().add("dateCol");
-		dateColumn.setMaxWidth(COLUMN_WIDTH_SMALL);
+		dateColumn.setPrefWidth(COLUMN_WIDTH_SMALL);
 		return dateColumn;
 	}
 
@@ -48,7 +48,7 @@ public class RecordsTable extends TableView<Transaction> {
 		TableColumn<Transaction, String> nameColumn = new TableColumn<>("Name");
 		nameColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("name"));
 		nameColumn.getStyleClass().add("nameCol");
-		nameColumn.setMaxWidth(COLUMN_WIDTH_SMALL);
+		nameColumn.setPrefWidth(COLUMN_WIDTH_MEDIUM);
 		return nameColumn;
 	}
 
@@ -67,7 +67,7 @@ public class RecordsTable extends TableView<Transaction> {
 		});
 
 		amountColumn.getStyleClass().add("amountCol");
-		amountColumn.setMaxWidth(COLUMN_WIDTH_SMALL);
+		amountColumn.setPrefWidth(COLUMN_WIDTH_SMALL);
 		return amountColumn;
 	}
 
@@ -75,7 +75,7 @@ public class RecordsTable extends TableView<Transaction> {
 		TableColumn<Transaction, String> typeColumn = new TableColumn<>("Type");
 		typeColumn.setCellValueFactory(new PropertyValueFactory<Transaction, String>("transactionType"));
 		typeColumn.getStyleClass().add("typeCol");
-		typeColumn.setMaxWidth(COLUMN_WIDTH_SMALL);
+		typeColumn.setPrefWidth(COLUMN_WIDTH_MEDIUM);
 		return typeColumn;
 	}
 }

@@ -1,4 +1,4 @@
-package com.financeanalyser.view.components;
+package com.financeanalyser.view.components.controls;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.financeanalyser.view.components;
+package com.financeanalyser.view.components.controls;
 
 import java.io.IOException;
 
@@ -30,9 +30,11 @@ public class ChartPane extends AnchorPane implements PopupChartListener {
 	private Button lineChartButton;
 
 	@FXML
-	private AnchorPane chartPane;
+	private FullScreenPane chartPane;
 
 	private Record record;
+	private PopOver pieChartPopover;
+	private PopOver lineChartPopover;
 
 	public ChartPane() {
 		super();
@@ -57,18 +59,32 @@ public class ChartPane extends AnchorPane implements PopupChartListener {
 
 	@FXML
 	public void createPieChart(ActionEvent event) {
-		PopOver p = new PopOver(new PieChartPopover(record, this));
-		p.setArrowLocation(ArrowLocation.TOP_LEFT);
-		p.show(pieChartButton);
+		if (pieChartPopover == null) {
+			pieChartPopover = new PopOver(new PieChartPopover(record, this));
+			pieChartPopover.setArrowLocation(ArrowLocation.TOP_LEFT);
+		}
+		pieChartPopover.show(pieChartButton);
 		event.consume();
 	}
-	
+
 	@FXML
 	public void createLineChart(ActionEvent event) {
-		PopOver p = new PopOver(new LineChartPopover(record, this));
-		p.setArrowLocation(ArrowLocation.TOP_LEFT);
-		p.show(pieChartButton);
+		if (lineChartPopover == null) {
+			lineChartPopover = new PopOver(new LineChartPopover(record, this));
+			lineChartPopover.setArrowLocation(ArrowLocation.TOP_LEFT);
+		}
+		lineChartPopover.show(lineChartButton);
 		event.consume();
+	}
+
+	@Override
+	public void setChartToDisplay(Node chart) {
+		AnchorPane.setBottomAnchor(chart, 0.0);
+		AnchorPane.setTopAnchor(chart, 0.0);
+		AnchorPane.setLeftAnchor(chart, 0.0);
+		AnchorPane.setRightAnchor(chart, 0.0);
+		chartPane.removeFramedNode();
+		chartPane.setFramedNode(chart);
 	}
 
 	private void loadFXML() {
@@ -84,7 +100,6 @@ public class ChartPane extends AnchorPane implements PopupChartListener {
 	}
 
 	private void initialiseFX() {
-
 	}
 
 	private void setAnchorPaneZero(Node pane) {
@@ -94,13 +109,4 @@ public class ChartPane extends AnchorPane implements PopupChartListener {
 		AnchorPane.setRightAnchor(pane, 0.0);
 	}
 
-	@Override
-	public void setChartToDisplay(Node chart) {
-		AnchorPane.setBottomAnchor(chart, 0.0);
-		AnchorPane.setTopAnchor(chart, 0.0);
-		AnchorPane.setLeftAnchor(chart, 0.0);
-		AnchorPane.setRightAnchor(chart, 0.0);
-		chartPane.getChildren().clear();
-		chartPane.getChildren().add(chart);
-	}
 }

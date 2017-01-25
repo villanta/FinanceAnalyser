@@ -16,6 +16,7 @@ import org.controlsfx.control.PopOver;
 import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
 import com.financeanalyser.model.data.TransactionType;
+import com.financeanalyser.view.components.controls.CheckBoxGrid;
 import com.financeanalyser.view.components.listeners.PopupChartListener;
 
 import javafx.beans.property.BooleanProperty;
@@ -57,6 +58,9 @@ public class LineChartPopover extends AnchorPane {
 	private DatePicker endDatePicker;
 	@FXML
 	private ComboBox<String> typeBox;
+
+	@FXML
+	private CheckBoxGrid checkboxGrid;
 
 	@FXML
 	private Button createButton;
@@ -231,26 +235,32 @@ public class LineChartPopover extends AnchorPane {
 		ObservableList<Series<String, Number>> data = FXCollections.observableArrayList();
 
 		typeAmmountMap.entrySet().stream().forEach(seriesSet -> {
-			Series<String, Number> series = new Series<>();
+			if (isSelected(seriesSet.getKey())) {
+				Series<String, Number> series = new Series<>();
 
-			series.setName(seriesSet.getKey());
+				series.setName(seriesSet.getKey());
 
-			List<SimpleEntry<String, Integer>> valList = seriesSet.getValue();
-			valList.stream().forEach(dateValPair -> {
-				if (seriesSet.getKey().equals(UNSPENT)) {
-					series.getData()
-							.add(new Data<String, Number>(dateValPair.getKey(), dateValPair.getValue() / 100.0));
-				} else {
-					series.getData().add(
-							new Data<String, Number>(dateValPair.getKey(), Math.abs(dateValPair.getValue() / 100.0)));
-				}
-			});
+				List<SimpleEntry<String, Integer>> valList = seriesSet.getValue();
+				valList.stream().forEach(dateValPair -> {
+					if (seriesSet.getKey().equals(UNSPENT)) {
+						series.getData()
+								.add(new Data<String, Number>(dateValPair.getKey(), dateValPair.getValue() / 100.0));
+					} else {
+						series.getData().add(new Data<String, Number>(dateValPair.getKey(),
+								Math.abs(dateValPair.getValue() / 100.0)));
+					}
+				});
 
-			data.add(series);
+				data.add(series);
+			}
 		});
 		chart.setData(data);
 
 		listener.setChartToDisplay(chart);
+	}
+
+	private boolean isSelected(String key) {
+		return checkboxGrid.isItemSelected(key);
 	}
 
 	private void addUnspentTypeMonthly(Map<String, List<SimpleEntry<String, Integer>>> typeAmmountMap,
@@ -267,11 +277,7 @@ public class LineChartPopover extends AnchorPane {
 			}));
 			unspentList.add(new SimpleEntry<String, Integer>(dates.get(i), unspentMonthlyVal.get()));
 		}
-
-		typeAmmountMap.remove(TransactionType.SALARY_BASIC.toString());
-		typeAmmountMap.remove(TransactionType.SALARY_BONUS.toString());
-		typeAmmountMap.remove(TransactionType.TRANSFER_IN.toString());
-
+		
 		typeAmmountMap.put(UNSPENT, unspentList);
 	}
 
@@ -306,6 +312,18 @@ public class LineChartPopover extends AnchorPane {
 
 	private void initialiseFX() {
 		initialiseComboBox();
+		initialiseCheckBoxGrid();
+	}
+
+	private void initialiseCheckBoxGrid() {
+		List<SimpleEntry<String, Boolean>> entries = new ArrayList<>();
+
+		TransactionType.getAllTypes().stream().map(type -> type.toString())
+				.forEach(str -> entries.add(new SimpleEntry<String, Boolean>(str, false)));
+
+		entries.add(new SimpleEntry<String, Boolean>("Unspent", false));
+
+		checkboxGrid.getItems().addAll(entries);
 	}
 
 	private void initialiseComboBox() {

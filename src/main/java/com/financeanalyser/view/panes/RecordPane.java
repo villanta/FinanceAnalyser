@@ -10,10 +10,10 @@ import com.financeanalyser.model.data.Record;
 import com.financeanalyser.model.data.Transaction;
 import com.financeanalyser.model.filemanager.RecordImport;
 import com.financeanalyser.view.AdvancedFilterListener;
-import com.financeanalyser.view.components.AdvancedFilter;
-import com.financeanalyser.view.components.ChartPane;
-import com.financeanalyser.view.components.RecordsTable;
-import com.financeanalyser.view.components.TransactionCreationBar;
+import com.financeanalyser.view.components.controls.AdvancedFilter;
+import com.financeanalyser.view.components.controls.ChartPane;
+import com.financeanalyser.view.components.controls.RecordsTable;
+import com.financeanalyser.view.components.controls.TransactionCreationBar;
 import com.financeanalyser.view.components.listeners.TransactionCreationBarListener;
 import com.financeanalyser.view.viewswitchcontroller.FAViewSwitchController;
 
