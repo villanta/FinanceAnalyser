@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.financeanalyser.model.data.Transaction;
+import com.financeanalyser.model.filemanager.transactionreader.BarclaysTransactionReader;
 import com.financeanalyser.model.filemanager.transactionreader.HalifaxTransactionReader;
 import com.financeanalyser.model.filemanager.transactionreader.TransactionReader;
 import com.financeanalyser.view.viewswitchcontroller.FAViewSwitchController;
@@ -46,9 +47,9 @@ public class RecordImport {
 	
 	public List<Transaction> process(List<String> lines) {
 		LOG.info("processing");
-		TransactionReader hfreader = new HalifaxTransactionReader();
-		
-		return lines.stream().map(hfreader::parseTransaction).collect(Collectors.toList());	
+		//TransactionReader reader = new HalifaxTransactionReader();
+		TransactionReader reader = new BarclaysTransactionReader();
+		return lines.stream().map(reader::parseTransaction).collect(Collectors.toList());	
 	}
 	
 
