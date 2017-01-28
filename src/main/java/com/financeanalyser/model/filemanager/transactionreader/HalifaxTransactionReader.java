@@ -30,6 +30,11 @@ public class HalifaxTransactionReader implements TransactionReader {
 
 		return new Transaction(date, amount, type, name, note);
 	}
+	
+	@Override
+	public String toString() {
+		return "Halifax transaction reader";
+	}
 
 	private String parseName(String name) {
 		return name.trim();

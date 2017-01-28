@@ -1,6 +1,8 @@
 package com.financeanalyser.view.panes;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
@@ -64,7 +66,7 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 
 	@FXML
 	private AdvancedFilter filterPane;
-	
+
 	@FXML
 	private ChartPane chartPane;
 
@@ -104,12 +106,15 @@ public class RecordPane extends AnchorPane implements TransactionCreationBarList
 		record.setTypeFilter(filter);
 		updateRecordsTable();
 	}
-	
+
 	@FXML
 	public void importRecordAction(ActionEvent event) {
 		RecordImport ri = new RecordImport();
-		record.getRecord().addAll(ri.importFile(viewSwitchController));
-		updateRecordsTable();
+		Optional<List<Transaction>> importFile = ri.importFile(viewSwitchController);
+		if (importFile.isPresent()) {
+			record.getRecord().addAll(importFile.get());
+			updateRecordsTable();
+		}
 		event.consume();
 	}
 

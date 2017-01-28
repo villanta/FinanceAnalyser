@@ -30,6 +30,11 @@ public class BarclaysTransactionReader implements TransactionReader {
 
 		return new Transaction(date, amount, type, name, note);
 	}
+	
+	@Override
+	public String toString() {
+		return "Barclays transaction reader";
+	}
 
 	private String parseName(String name) {
 		return name.substring(0, 18).trim();
