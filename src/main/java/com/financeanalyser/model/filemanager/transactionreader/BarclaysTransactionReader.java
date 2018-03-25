@@ -113,6 +113,7 @@ public class BarclaysTransactionReader implements TransactionReader {
 		return (int) Double.parseDouble(moneyFlow.trim()) * 100;
 	}
 
+	/*
 	private int parseInt(String transactionAmount) {
 		try {
 			double amount = Double.parseDouble(transactionAmount.trim());
@@ -122,6 +123,7 @@ public class BarclaysTransactionReader implements TransactionReader {
 			return 0;
 		}
 	}
+	*/
 
 	private LocalDate parseDate(String dateString) {
 		// Expected format: 14/01/2017
